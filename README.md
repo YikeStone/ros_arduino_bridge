@@ -1,6 +1,6 @@
 This Fork is modified for L298N motor driver and quad encoders, with one major bug fix and other minor bug fixes.
 This supports separate PID control system for two (left, right) motors.
-Removed support for all extra stuff.
+Removed support for all other extra stuff.
 
 Overview
 --------
