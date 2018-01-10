@@ -254,8 +254,8 @@ class Arduino:
         print "Updating PID parameters"
         cmd = 'L ' + str(lKp) + ':' + str(lKd) + ':' + str(lKi) + ':' + str(lKo)
         self.execute_ack(cmd)
-		cmd = 'R ' + str(rKp) + ':' + str(rKd) + ':' + str(rKi) + ':' + str(rKo)
-		self.execute_ack(cmd)
+        cmd = 'R ' + str(rKp) + ':' + str(rKd) + ':' + str(rKi) + ':' + str(rKo)
+        self.execute_ack(cmd)
 
     def get_baud(self):
         ''' Get the current baud rate on the serial port.
