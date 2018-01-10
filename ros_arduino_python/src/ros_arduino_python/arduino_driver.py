@@ -248,12 +248,14 @@ class Arduino:
         self.mutex.release()
         return ack == 'OK'
 
-    def update_pid(self, Kp, Kd, Ki, Ko):
+    def update_pid(self, lKp, lKd, lKi, lKo, rKp, rKd, rKi, rKo):
         ''' Set the PID parameters on the Arduino
         '''
         print "Updating PID parameters"
-        cmd = 'u ' + str(Kp) + ':' + str(Kd) + ':' + str(Ki) + ':' + str(Ko)
+        cmd = 'L ' + str(lKp) + ':' + str(lKd) + ':' + str(lKi) + ':' + str(lKo)
         self.execute_ack(cmd)
+		cmd = 'R ' + str(rKp) + ':' + str(rKd) + ':' + str(rKi) + ':' + str(rKo)
+		self.execute_ack(cmd)
 
     def get_baud(self):
         ''' Get the current baud rate on the serial port.

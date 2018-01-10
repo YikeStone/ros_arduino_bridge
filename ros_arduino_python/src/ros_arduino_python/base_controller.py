@@ -44,11 +44,16 @@ class BaseController:
         pid_params['wheel_track'] = rospy.get_param("~wheel_track", "")
         pid_params['encoder_resolution'] = rospy.get_param("~encoder_resolution", "") 
         pid_params['gear_reduction'] = rospy.get_param("~gear_reduction", 1.0)
-        pid_params['Kp'] = rospy.get_param("~Kp", 20)
-        pid_params['Kd'] = rospy.get_param("~Kd", 12)
-        pid_params['Ki'] = rospy.get_param("~Ki", 0)
-        pid_params['Ko'] = rospy.get_param("~Ko", 50)
+        pid_params['lKp'] = rospy.get_param("~lKp", 20)
+        pid_params['lKd'] = rospy.get_param("~lKd", 12)
+        pid_params['lKi'] = rospy.get_param("~lKi", 0)
+        pid_params['lKo'] = rospy.get_param("~lKo", 50)
+        pid_params['rKp'] = rospy.get_param("~rKp", 20)
+        pid_params['rKd'] = rospy.get_param("~rKd", 12)
+        pid_params['rKi'] = rospy.get_param("~rKi", 0)
+        pid_params['rKo'] = rospy.get_param("~rKo", 50)
         
+		
         self.accel_limit = rospy.get_param('~accel_limit', 0.1)
         self.motors_reversed = rospy.get_param("~motors_reversed", False)
         
@@ -90,7 +95,7 @@ class BaseController:
         # Set up the odometry broadcaster
         self.odomPub = rospy.Publisher('odom', Odometry, queue_size=5)
         self.odomBroadcaster = TransformBroadcaster()
-        
+        self.cameraBroadcaster = TransformBroadcaster()
         rospy.loginfo("Started base controller for a base of " + str(self.wheel_track) + "m wide with " + str(self.encoder_resolution) + " ticks per rev")
         rospy.loginfo("Publishing odometry data at: " + str(self.rate) + " Hz using " + str(self.base_frame) + " as base frame")
         
@@ -110,12 +115,17 @@ class BaseController:
         self.encoder_resolution = pid_params['encoder_resolution']
         self.gear_reduction = pid_params['gear_reduction']
         
-        self.Kp = pid_params['Kp']
-        self.Kd = pid_params['Kd']
-        self.Ki = pid_params['Ki']
-        self.Ko = pid_params['Ko']
+        self.lKp = pid_params['lKp']
+        self.lKd = pid_params['lKd']
+        self.lKi = pid_params['lKi']
+        self.lKo = pid_params['lKo']
         
-        self.arduino.update_pid(self.Kp, self.Kd, self.Ki, self.Ko)
+        self.rKp = pid_params['rKp']
+        self.rKd = pid_params['rKd']
+        self.rKi = pid_params['rKi']
+        self.rKo = pid_params['rKo']
+        
+        self.arduino.update_pid(self.lKp, self.lKd, self.lKi, self.lKo,self.rKp, self.rKd, self.rKi, self.rKo)
 
     def poll(self):
         now = rospy.Time.now()
@@ -171,7 +181,11 @@ class BaseController:
                 self.base_frame,
                 "odom"
                 )
-    
+    	    self.odomBroadcaster.sendTransform((self.x - 0.15, self.y - 0.055, 0.225),
+                         (quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+                         rospy.Time.now(),
+                         "depth_camera_frame",
+                         self.base_frame)
             odom = Odometry()
             odom.header.frame_id = "odom"
             odom.child_frame_id = self.base_frame

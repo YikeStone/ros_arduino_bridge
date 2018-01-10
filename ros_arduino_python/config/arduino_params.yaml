@@ -24,10 +24,15 @@ base_frame: base_link
 #motors_reversed: True
 
 # === PID parameters
-#Kp: 10
-#Kd: 12
-#Ki: 0
-#Ko: 50
+#lKp: 10
+#lKd: 12
+#lKi: 0
+#lKo: 50
+#rKp: 10
+#rKd: 12
+#rKi: 0
+#rKo: 50
+
 #accel_limit: 1.0
 
 # === Sensor definitions.  Examples only - edit for your robot.
